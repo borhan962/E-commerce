@@ -6,7 +6,7 @@ import Context from "./context/contextMangment";
 export default function Home() {
   return (
       <>
-
+      <h1>Home</h1>
       </>
   );
 }
