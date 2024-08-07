@@ -1,49 +1,66 @@
 'use client'
-import axios from 'axios';
-import { useFormik } from 'formik'
-import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { store } from '@/app/context/contextMangment'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import React, { useEffect, useState, useContext } from 'react'
+import { FaStar } from 'react-icons/fa6'
+import { FallingLines } from 'react-loader-spinner'
 
 
-function validate(values: any) {
+interface detailsProduct {
+  imageCover: "",
+  category: {
+    slug: '',
+    name: ""
+  },
+  title: "",
+  price: 0,
+  ratingsAverage: 0,
+  id: 0,
+  description: "",
 
-  const errors: any = {}
-
-  return errors;
 }
 
-export default function Resetpassword() {
-  const navegate = useRouter()
-  const [err, setErr] = useState(false)
-  const [user, setUser] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const formik = useFormik({
-    initialValues: {
-      resetCode: '',
-    },
-    validate,
-    onSubmit: (values) => {
-      regiestForm(values)
-    },
-  });
 
-  async function regiestForm(values: any) {
+
+export default function Details() {
+  const [loading, setLoading] = useState(false)
+  const [product, setProduct] = useState<detailsProduct>()
+  const { id } = useParams()
+  
+  const { addToCart, err, user, loadCart } = useContext(store)
+
+  async function getProduct() {
     setLoading(true)
-    return await axios.post("https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode", values)
+    return await axios.get(`https://ecommerce.routemisr.com/api/v1/products/${id}`)
       .then((data) => {
-        console.log(data);
-        setUser(data.data.status)
+        console.log(data.data.data)
+        setProduct(data.data.data)
         setLoading(false)
-        navegate.push('./changePassword')
-      }).catch((error) => {
-        console.log(error.response.data.message)
-        setErr(error.response.data.message)
-        setLoading(false)
+      }).catch((err) => {
+        console.log(err);
       })
   }
 
+  useEffect(() => {
+    getProduct()
+  }, [])
+
+
+
+  function addProductToCart(productId: any) {
+
+    addToCart(productId)
+    
+  }
+
+
+
+
   return (
+
     <>
       <div id="toast-danger" className={` flex items-center absolute right-0 bottom-0 w-full max-w-xs ${err ? 'visible' : "hidden"} p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"  `} role="alert">
         <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
@@ -77,22 +94,24 @@ export default function Resetpassword() {
         </button>
       </div>
 
-      <form className="max-w-sm mx-auto mt-10" onSubmit={formik.handleSubmit} >
-      <h1 className="text-lg font-bold">check your email for reset code</h1>
-        <h2 className="my-5 ">reset code:</h2>
-
-
-
-        <div className="mb-5">
-          <label htmlFor="resetCode" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">code : </label>
-          <input type="text" value={formik.values.resetCode} onChange={formik.handleChange} onBlur={formik.handleBlur} id="resetCode" className="bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-          {formik.touched.resetCode && formik.errors.resetCode ? <div className='bg-red-500 rounded-lg ps-5 py-5'>{formik.errors.resetCode}</div> : null}
-        </div>
-
-
-        <button type="submit" disabled={!(formik.isValid && formik.dirty)} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? <span className="loader"></span> : <span>Submit</span>}</button>
-      </form>
-
+      <div className='flex justify-center items-center h-screen'>
+        {loading ? <FallingLines color="#4fa94d" width="100" height='300px' z-index="999999" visible={true} /> :
+          <div className='flex justify-center items-center'>
+            <div key={product?.id} className="container m-auto grid grid-cols-3 items-center mt-5">
+              <div>
+                <img src={product?.imageCover} alt="" />
+              </div>
+              <div className=" col-span-2  ">
+                <h5 className='text-lg font-bold mb-2'>{product?.title}</h5>
+                <p className="mb-2">{product?.description}</p>
+                <p className="text-green-700 mb-2">{product?.category.name}</p>
+                <p className=" mb-2">{product?.price + " EGP"}</p>
+                <button onClick={() => addProductToCart(product?.id)} className="bg-green-400 text-black rounded-lg w-full py-3">{loadCart ? <span className="loader"></span> : <span>ADD TO CART</span>}</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     </>
   )
 }
