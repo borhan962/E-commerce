@@ -49,8 +49,9 @@ export default function Login() {
       .then((data) => {
         console.log(data);
         setUser(data.data.message)
-        localStorage.setItem("user Token", data.data.token)
+        localStorage.setItem("userToken", data.data.token)
         setToken(data.data.token)
+        console.log(token);
         setLoading(false)
         navegate.push('/')
       }).catch((error) => {

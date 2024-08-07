@@ -77,7 +77,7 @@ export default function Singup() {
          setLoading(false)
         })
     }
-
+    
     function toForgetPasswordPage(){
       navegate.push("./forget") 
     }
