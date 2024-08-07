@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import { store } from '../context/contextMangment'
 
 export default function Nav() {
-  const { token, setToken, numCart } = useContext(store)
+  const { token, setToken } = useContext(store)
+  
   const navegate = useRouter()
-  console.log(numCart)
+
 
   const handleLogout = () => {
     localStorage.removeItem("userToken")
@@ -50,11 +51,7 @@ export default function Nav() {
                 <Link href="/" className={` "block py-2 px-3 text-black bg-blue-700 rounded md:bg-transparent hover:text-blue-700  md:p-0 " aria-current="page"  `}>Home</Link>
               </li>
               <li>
-                <Link href="/cart" className={` "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" `}>Cart
-                  <span className="inline-flex relative bottom-3 right-2 items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
-                  {numCart}
-                  </span>
-                </Link>
+                <Link href="/cart" className={` "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"  `}>Cart</Link>
               </li>
               <li>
                 <Link href="/products" className={` "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" `}>Products</Link>

@@ -29,6 +29,7 @@ export default function Details() {
   const [loading, setLoading] = useState(false)
   const [product, setProduct] = useState<detailsProduct>()
   const { id } = useParams()
+  
   const { addToCart, err, user, loadCart } = useContext(store)
 
   async function getProduct() {

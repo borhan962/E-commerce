@@ -27,14 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-
+      <Context>
         <QueryClientProvider client={new QueryClient()}>
-          <Context>
+          
             <Nav />
             {children}
-          </Context>
+         
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
+        </Context>
 
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
       </body>

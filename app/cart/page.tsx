@@ -7,14 +7,18 @@ import { useQuery } from '@tanstack/react-query'
 import Products from '../products/page';
 import Link from 'next/link';
 
+
 export default function Cart() {
   const [newCart , setNewCart] = useState({})
   const [loading , setLoading] = useState(false)
+  const [numCart , setNumCart] = useState(0)
 
   const { token } = useContext(store)
 
-   function getCart(){
-    return axios.get("https://ecommerce.routemisr.com/api/v1/cart", {
+
+
+ async  function getCart(){
+    return await axios.get("https://ecommerce.routemisr.com/api/v1/cart", {
       headers: {
         token
       }
@@ -25,22 +29,20 @@ export default function Cart() {
   queryKey: ["Cart"],
   queryFn:getCart,
   refetchInterval: 500
- })
+ }
+)
 
-  // console.log(data)
 
- 
+
  async function deleteFromCart(productId: any) {
   return await axios.delete(`https://ecommerce.routemisr.com/api/v1/cart/${ productId }`, {
     headers: {
-
       token
-    
     }
     }
 
   ).then((data) => {
-    console.log(data)
+    console.log(data.data.numOfCartItems)
     return data 
   }).catch((err) => {
 
@@ -63,11 +65,21 @@ async function updateCountOfCart(productId: any, count: any) {
     config
 
   ).then((data) => {
-    console.log(data)
+    console.log(data.data.numOfCartItems)
+    setNumCart(data.data.numOfCartItems)
+    return data
   }).catch((err) => {
     console.log(err)
+    return err
   })
 }
+
+
+  if (data?.data.numOfCartItems == 0) {
+    return <h2 className= "flex text-lg font-bold justify-center m-5">empty cart</h2>
+  }else if(token === null) {
+    return <h3 className= "flex text-lg font-bold justify-center m-5">Login First Please</h3>
+  }
 
 
 
@@ -127,7 +139,6 @@ async function updateCountOfCart(productId: any, count: any) {
                   </td>
                   <td className="px-6 py-4">
                     <button className="font-medium text-red-600 dark:text-red-500 hover:underline" onClick={()=>deleteFromCart(item.product.id)}>Remove</button>
-                    
                   </td>   
                 </tr>
               ))}
@@ -136,10 +147,14 @@ async function updateCountOfCart(productId: any, count: any) {
             <tr className="font-semibold text-gray-900 dark:text-white">
                 <th scope="row" className="px-6 py-3 text-base">Total</th>
                 <td></td>
-                <td className="px-6 py-3 font-semibold text-gray-900 dark:text-white">{data.data.numOfCartItems}</td>
-                <td className=" py-3 ">{"total Price: " + data.data.data.totalCartPrice}</td>
+                <td className="px-6 py-3 font-semibold text-gray-900 dark:text-white">{data?.data.numOfCartItems}</td>
+                <td className=" py-3 ">{"total Price: " + data?.data.data.totalCartPrice}</td>
                 <td>
+
+                  <Link href={"./address/" + data?.data.data._id} >
                   <button className='bg-green-400 rounded-lg p-3'>CheckOut</button>
+                  </Link>
+                  
                 </td>
             </tr>
         </tfoot>

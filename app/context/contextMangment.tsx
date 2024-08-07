@@ -9,7 +9,6 @@ export const store = createContext({
   loadCart: false,
   addToCart : {},
   getCardData: {},
-  numCart : 0,
 
 })
 
@@ -17,11 +16,17 @@ export default function Context(props: any) {
 
   const [err, setErr] = useState(false)
   const [user, setUser] = useState(false)
-  const [numCart , setNumCart] = useState(0)
   const [loadCart, setLoadCart] = useState(false)
   const [token, setToken] = useState(null)
 
   async function addToCart(productId: any) {
+
+    useEffect(() => {
+      if (localStorage.getItem("userToken")) {
+        setToken(localStorage.getItem("userToken"))
+      }
+    }, [])
+    
     setLoadCart(true)
 
     return await axios.post("https://ecommerce.routemisr.com/api/v1/cart", { productId },
@@ -32,9 +37,8 @@ export default function Context(props: any) {
       }
 
     ).then((data) => {
-      // console.log(data.data.numOfCartItems)
+      console.log(data)
       setUser(data.data.message)
-      setNumCart(data.data.numOfCartItems)
       setLoadCart(false)
       return data 
     }).catch((err) => {
@@ -45,19 +49,14 @@ export default function Context(props: any) {
 
     })
 
-
   }
 
 
-  useEffect(() => {
-    if (localStorage.getItem("userToken")) {
-      setToken(localStorage.getItem("userToken"))
-    }
-  }, [])
+
 
   return (
     <>
-      <store.Provider value={{ token, setToken, addToCart, err, user, loadCart , numCart  }}>
+      <store.Provider value={{ token, setToken, addToCart, err, user, loadCart  }}>
         {props.children}
       </store.Provider>
     </>

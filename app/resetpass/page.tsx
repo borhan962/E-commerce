@@ -78,7 +78,8 @@ export default function Resetpassword() {
       </div>
 
       <form className="max-w-sm mx-auto mt-10" onSubmit={formik.handleSubmit} >
-        <h1 className="mb-5 text-lg font-bold">reset code:</h1>
+      <h1 className="text-lg font-bold">check your email for reset code</h1>
+        <h2 className="my-5 ">reset code:</h2>
 
 
 
